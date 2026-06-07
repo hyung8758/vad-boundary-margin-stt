@@ -1,0 +1,9 @@
+PyYAML
+numpy
+pandas
+matplotlib
+jiwer
+textgrid
+torch
+torchaudio
+silero-vad

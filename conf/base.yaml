@@ -1,0 +1,50 @@
+datasets:
+  librispeech:
+    data_path: data/LibriSpeech
+    textgrid_path: data/LibriSpeech/textgrid
+    splits:
+      - dev-clean
+      - dev-other
+      - test-clean
+      - test-other
+
+artifacts_path: artifacts
+exp_path: exp
+
+manifest:
+  output_path: artifacts/manifests
+  skip_missing_textgrid: true
+
+oracle:
+  audio_output_path: artifacts/generated_audio
+  min_variant_duration_sec: 0.10
+  leading_ms: [-100, -50, 0, 50, 100, 150, 200, 300, 400, 500]
+  trailing_ms: [-100, -50, 0, 50, 100, 150, 200, 300, 400, 500]
+  pause_buckets_ms:
+    - [200, 400]
+    - [400, 700]
+    - [700, null]
+  pause_cut_positions: [0.2, 0.5, 0.8]
+  pause_min_duration_ms: 200
+
+asr:
+  model_name: wav2vec2-base-960h
+  device: cuda
+  device_index: [0]
+  num_workers: 1
+
+silero_vad:
+  threshold: 0.5
+  min_silence_duration_ms: 100
+  speech_pad_ms: 30
+  max_speech_duration_s: 30.0
+  target_sample_rate: 16000
+
+vad_policy:
+  policy_name: fa_informed_v1
+  clean:
+    leading_pad_ms: 400
+    trailing_pad_ms: 400
+  other:
+    leading_pad_ms: 500
+    trailing_pad_ms: 500
