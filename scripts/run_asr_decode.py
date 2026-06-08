@@ -70,6 +70,7 @@ def decode_one_row(row, runner, config):
     record["model_name"] = config["asr"]["model_name"]
     record["device"] = config["asr"]["device"]
     record["device_index"] = runner.settings.device_index
+    record["physical_device_index"] = runner.settings.physical_device_index
     return record
 
 

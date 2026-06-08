@@ -1,5 +1,6 @@
 import re
 from dataclasses import dataclass
+from typing import Optional
 
 import torch
 import torchaudio
@@ -15,6 +16,7 @@ class Wav2Vec2Settings:
     model_name: str
     device: str
     device_index: int
+    physical_device_index: Optional[int] = None
 
 
 def get_asr_model_tag(config):
@@ -104,11 +106,13 @@ def create_asr_runners(config):
         return [Wav2Vec2Runner(settings)]
 
     runners = []
-    for device_index in get_device_indices(config):
+    # CUDA_VISIBLE_DEVICES remaps selected physical GPUs to local cuda:0..N-1 ordinals.
+    for local_device_index, physical_device_index in enumerate(get_device_indices(config)):
         settings = Wav2Vec2Settings(
             model_name=config["asr"]["model_name"],
             device=config["asr"]["device"],
-            device_index=device_index,
+            device_index=local_device_index,
+            physical_device_index=physical_device_index,
         )
         runners.append(Wav2Vec2Runner(settings))
     return runners

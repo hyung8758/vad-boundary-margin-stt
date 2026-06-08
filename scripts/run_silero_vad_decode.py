@@ -8,7 +8,6 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from src.audio.io import read_audio, write_audio
 from src.common import ensure_dir, load_config, read_jsonl, set_cuda_visible_devices, setup_logging, write_jsonl
 
 
@@ -31,6 +30,7 @@ def main() -> None:
     args = parse_args()
     config = load_config(args.config)
     set_cuda_visible_devices(config)
+    from src.audio.io import read_audio, write_audio
     from src.asr import create_asr_runners, get_asr_model_tag
     from src.vad import create_silero_vad_runner
     from src.vad_policy import apply_vad_policy, create_vad_policy_settings, get_vad_policy_settings
@@ -132,6 +132,7 @@ def main() -> None:
                     "model_name": config["asr"]["model_name"],
                     "device": config["asr"]["device"],
                     "device_index": asr_runner.settings.device_index,
+                    "physical_device_index": asr_runner.settings.physical_device_index,
                 }
             )
         return worker_results
