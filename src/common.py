@@ -115,6 +115,7 @@ def set_cuda_visible_devices(config):
 
 
 def get_split_group(split_name):
+    # This release only handles LibriSpeech clean/other split names.
     if "clean" in split_name:
         return "clean"
     return "other"

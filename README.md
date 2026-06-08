@@ -1,12 +1,12 @@
 # vad-boundary-margin-stt
 
-Official implementation for the KCC 2026 paper:
+Code release for our KCC 2026 paper:
 
 **Analysis of the Effects of VAD Boundary Margin Adjustment on STT Performance**  
 Hyungwon Yang, Taeho Kim, Younsou Choi, Suhan Son
 
 ## Overview
-This repository contains code for the experiments reported in the KCC paper on boundary margin adjustment for VAD-based STT.
+This repository provides the code used in our KCC 2026 paper on boundary margin adjustment for VAD-based STT.
 
 The study examines how leading and trailing boundary margins affect STT performance and whether controlled findings can improve practical VAD-based decoding.
 
@@ -24,7 +24,7 @@ The codebase supports two experiment stages used in the paper:
   - Evaluates whether margin settings derived from Step 1 improve practical decoding
 
 ## Main paper findings
-According to the KCC paper, the main findings are:
+The paper reports the following findings:
 
 1. Leading cuts are more harmful than trailing cuts.
 2. Exact boundary trimming is suboptimal for stable STT decoding.
@@ -138,21 +138,17 @@ Generated files are saved under `exp/step1` and `exp/step2`.
 
 Frequently used Step 1 outputs:
 - `exp/step1/analysis/tables/leading_trailing_cer.csv`
-- `exp/step1/analysis/tables/leading_trailing_combined_error_profile.csv`
-- `exp/step1/analysis/tables/leading_trailing_first_last_error_rate_profile.csv`
+- `exp/step1/analysis/tables/first_and_last_word_errors.csv`
 - `exp/step1/analysis/figures/leading_trailing_cer.pdf`
-- `exp/step1/analysis/figures/leading_trailing_first_last_error_rate_profile.pdf`
+- `exp/step1/analysis/figures/first_and_last_word_errors.pdf`
 
 ### Step 2 outputs
 - decoding results: `exp/step2/decodes/`
 - evaluation results: `exp/step2/eval/`
-- analysis tables and figures: `exp/step2/analysis/`
+- analysis table: `exp/step2/analysis/`
 
 Frequently used Step 2 outputs:
-- `exp/step2/analysis/tables/clean_other_table.csv`
 - `exp/step2/analysis/tables/cer_boundary_changed_table.csv`
-- `exp/step2/analysis/figures/vad_cer.pdf`
-- `exp/step2/analysis/figures/vad_first_last_word_error.pdf`
 
 ## Citation
 If you use this repository, please cite the corresponding paper.

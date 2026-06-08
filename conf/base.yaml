@@ -28,6 +28,7 @@ oracle:
   pause_min_duration_ms: 200
 
 asr:
+  # This paper release supports only this ASR backbone; changing this value is not supported.
   model_name: wav2vec2-base-960h
   device: cuda
   device_index: [0]

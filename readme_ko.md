@@ -1,11 +1,11 @@
 # vad-boundary-margin-stt
 
-KCC 2026 논문 **Analysis of the Effects of VAD Boundary Margin Adjustment on STT Performance** 의 공식 구현 저장소입니다.
+KCC 2026 논문 **Analysis of the Effects of VAD Boundary Margin Adjustment on STT Performance** 에 사용한 코드 공개 저장소입니다.
 
-저자: Hyungwon Yang, Taeho Kim, Younsou Choi, Suhan Son
+저자: 양형원, 김태호, 최윤수, 손수한
 
 ## 개요
-이 저장소는 KCC 논문에서 사용한 VAD 기반 STT 경계 마진 실험 코드를 포함합니다.
+이 저장소는 KCC 2026 논문에서 사용한 VAD 기반 STT 경계 마진 실험 코드를 제공합니다.
 
 논문은 leading / trailing boundary margin이 STT 성능에 어떤 영향을 주는지 분석하고, 그 결과를 실제 VAD 기반 디코딩 개선에 적용할 수 있는지 평가합니다.
 
@@ -23,7 +23,7 @@ KCC 2026 논문 **Analysis of the Effects of VAD Boundary Margin Adjustment on S
   - Step 1에서 얻은 margin 설정이 실제 디코딩 개선에 도움이 되는지 평가
 
 ## 논문 핵심 결과
-KCC 논문의 핵심 결과는 다음과 같습니다.
+논문에서는 다음 결과를 보고합니다.
 
 1. leading cut은 trailing cut보다 더 해롭습니다.
 2. exact boundary trimming은 안정적인 STT 디코딩에 불리합니다.
@@ -137,21 +137,17 @@ bash scripts/run_experiment_pipeline.sh all_steps librispeech
 
 자주 사용하는 Step 1 산출물:
 - `exp/step1/analysis/tables/leading_trailing_cer.csv`
-- `exp/step1/analysis/tables/leading_trailing_combined_error_profile.csv`
-- `exp/step1/analysis/tables/leading_trailing_first_last_error_rate_profile.csv`
+- `exp/step1/analysis/tables/first_and_last_word_errors.csv`
 - `exp/step1/analysis/figures/leading_trailing_cer.pdf`
-- `exp/step1/analysis/figures/leading_trailing_first_last_error_rate_profile.pdf`
+- `exp/step1/analysis/figures/first_and_last_word_errors.pdf`
 
 ### Step 2 출력
 - 디코딩 결과: `exp/step2/decodes/`
 - 평가 결과: `exp/step2/eval/`
-- 분석 표/그림: `exp/step2/analysis/`
+- 분석 표: `exp/step2/analysis/`
 
 자주 사용하는 Step 2 산출물:
-- `exp/step2/analysis/tables/clean_other_table.csv`
 - `exp/step2/analysis/tables/cer_boundary_changed_table.csv`
-- `exp/step2/analysis/figures/vad_cer.pdf`
-- `exp/step2/analysis/figures/vad_first_last_word_error.pdf`
 
 ## 인용
 이 저장소를 사용한다면 아래 논문을 인용해 주세요.
