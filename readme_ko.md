@@ -1,36 +1,36 @@
 # vad-boundary-margin-stt
 
-KCC 2026 논문 **Analysis of the Effects of VAD Boundary Margin Adjustment on STT Performance** 에 사용한 코드 공개 저장소입니다.
+KCC 2026 논문 **Analysis of the Effects of VAD Boundary Margin Adjustment on STT Performance** 에서 사용한 실험 코드를 정리한 저장소입니다.
 
 저자: 양형원, 김태호, 최윤수, 손수한
 
 ## 개요
-이 저장소는 KCC 2026 논문에서 사용한 VAD 기반 STT 경계 마진 실험 코드를 제공합니다.
+이 저장소에는 KCC 2026 논문에서 사용한 VAD 기반 STT 경계 마진 실험 코드가 포함되어 있습니다.
 
-논문은 leading / trailing boundary margin이 STT 성능에 어떤 영향을 주는지 분석하고, 그 결과를 실제 VAD 기반 디코딩 개선에 적용할 수 있는지 평가합니다.
+논문에서는 음성 구간의 앞쪽/뒤쪽 경계 마진을 조절했을 때 STT 성능이 어떻게 달라지는지 분석하고, 이 결과를 실제 VAD 기반 디코딩에 적용할 수 있는지 확인합니다.
 
-코드는 논문에서 사용한 두 단계의 실험을 지원합니다.
+코드는 논문에서 수행한 두 단계의 실험으로 구성되어 있습니다.
 
 - **Step 1: Controlled Boundary Margin Analysis**
-  - MFA TextGrid 강제정렬 경계를 사용
-  - utterance 주변 leading / trailing margin sweep 수행
-  - CER 및 boundary-sensitive error metric 평가
-  - 논문에 사용된 표와 그림 생성
+  - MFA TextGrid의 강제 정렬 경계를 사용합니다.
+  - 각 발화의 앞쪽/뒤쪽 경계 마진을 바꿔 가며 실험합니다.
+  - CER과 경계 오류에 민감한 지표를 계산합니다.
+  - 논문 Figure 1, Figure 2에 사용한 표와 그림을 생성합니다.
 
 - **Step 2: Practical VAD-Based Decoding**
-  - Silero VAD를 사용한 실제 segmentation 실험
-  - original baseline, default VAD, FA-informed VAD 조건 비교
-  - Step 1에서 얻은 margin 설정이 실제 디코딩 개선에 도움이 되는지 평가
+  - Silero VAD로 음성 구간을 검출한 뒤 STT를 수행합니다.
+  - 원본 발화 baseline, 기본 VAD, FA-informed VAD 조건을 비교합니다.
+  - Step 1에서 얻은 마진 설정이 실제 VAD 기반 디코딩에도 도움이 되는지 평가합니다.
 
 ## 논문 핵심 결과
-논문에서는 다음 결과를 보고합니다.
+논문의 주요 결과는 다음과 같습니다.
 
-1. leading cut은 trailing cut보다 더 해롭습니다.
-2. exact boundary trimming은 안정적인 STT 디코딩에 불리합니다.
-3. 적절한 positive margin은 aggressive trimming으로 인한 성능 저하를 줄여줍니다.
-4. Step 1에서 얻은 margin 설정을 Step 2에 적용하면 default VAD 대비 CER가 개선됩니다.
+1. 발화 앞부분이 잘릴 때가 뒷부분이 잘릴 때보다 STT 성능에 더 큰 영향을 줍니다.
+2. 음성 경계를 너무 딱 맞게 자르는 것보다 약간의 여유를 두는 편이 안정적입니다.
+3. 적절한 양의 마진을 추가하면 과도한 경계 절단으로 인한 성능 저하를 줄일 수 있습니다.
+4. Step 1에서 찾은 마진 설정을 실제 VAD 디코딩에 적용했을 때, 기본 VAD 설정보다 CER가 개선되었습니다.
 
-실제 VAD 기반 실험에서 보고된 상대 CER 개선은 다음과 같습니다.
+실제 VAD 기반 실험에서 얻은 상대 CER 개선율은 다음과 같습니다.
 - **clean: 18.1%**
 - **other: 14.9%**
 
@@ -53,12 +53,12 @@ pip install -r requirements.txt
 ```
 
 이 저장소는 다음을 전제로 합니다.
-- LibriSpeech 오디오가 이미 준비되어 있음
-- MFA / forced-alignment TextGrid 파일이 이미 준비되어 있음
-- MFA 자체는 이 저장소 안에서 설치하거나 실행하지 않음
+- LibriSpeech 오디오가 준비되어 있어야 합니다.
+- MFA / forced-alignment TextGrid 파일이 준비되어 있어야 합니다.
+- MFA 설치 및 실행 과정은 이 저장소에 포함되어 있지 않습니다.
 
 ## 데이터 준비
-논문 실험은 LibriSpeech 평가 split만 사용합니다.
+논문 실험에서는 LibriSpeech 평가 split만 사용했습니다.
 
 예상 데이터 구조는 아래와 같습니다.
 
@@ -72,7 +72,7 @@ data/
     textgrid/
 ```
 
-논문에서 사용한 STT 백엔드는 `wav2vec2-base-960h`입니다.
+논문에서 사용한 STT 모델은 `wav2vec2-base-960h`입니다.
 
 ## 설정
 기본 설정은 `conf/base.yaml`에 정의되어 있습니다.
@@ -85,7 +85,7 @@ data/
 - `silero_vad`
 - `vad_policy`
 
-논문 Step 2에서 사용한 FA-informed VAD 정책은 다음과 같습니다.
+Step 2에서 사용한 FA-informed VAD 마진 설정은 다음과 같습니다.
 - clean: leading 400 ms / trailing 400 ms
 - other: leading 500 ms / trailing 500 ms
 
@@ -95,10 +95,10 @@ data/
 이 단계는 다음을 수행합니다.
 1. manifest 생성
 2. oracle margin variant 생성
-3. baseline utterance 디코딩
+3. baseline 발화 디코딩
 4. oracle variant 디코딩
-5. per-utterance / summary CSV 생성
-6. 분석용 표와 그림 생성
+5. 발화 단위/요약 CSV 생성
+6. 논문용 표와 그림 생성
 
 실행:
 
@@ -109,11 +109,11 @@ bash scripts/run_experiment_pipeline.sh step1 librispeech
 ### Step 2: Practical VAD-Based Decoding
 이 단계는 다음을 수행합니다.
 1. Step 1에서 생성한 manifest 재사용
-2. Step 1 baseline decode 재사용
+2. Step 1의 baseline decode 결과 재사용
 3. `vad_default` 디코딩
 4. `vad_fa_informed` 디코딩
-5. per-utterance / summary CSV 생성
-6. 분석용 표와 그림 생성
+5. 발화 단위/요약 CSV 생성
+6. 논문용 표 생성
 
 실행:
 
@@ -128,7 +128,7 @@ bash scripts/run_experiment_pipeline.sh all_steps librispeech
 ```
 
 ## 출력 결과
-생성 결과는 `exp/step1`과 `exp/step2` 아래에 저장됩니다.
+생성된 결과는 `exp/step1`과 `exp/step2` 아래에 저장됩니다.
 
 ### Step 1 출력
 - 디코딩 결과: `exp/step1/decodes/`
@@ -150,7 +150,7 @@ bash scripts/run_experiment_pipeline.sh all_steps librispeech
 - `exp/step2/analysis/tables/cer_boundary_changed_table.csv`
 
 ## 인용
-이 저장소를 사용한다면 아래 논문을 인용해 주세요.
+이 저장소를 사용하신다면 아래 논문을 인용해 주세요.
 
 ```bibtex
 @inproceedings{yang2026kcc,
