@@ -10,7 +10,11 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Read pipeline values from conf/base.yaml.")
     parser.add_argument("--config", default=str(PROJECT_ROOT / "conf" / "base.yaml"))
     parser.add_argument("--dataset", default=None, help="Dataset name under datasets.")
-    parser.add_argument("--field", required=True, choices=["splits", "asr_tag", "vad_policy_name"])
+    parser.add_argument(
+        "--field",
+        required=True,
+        choices=["splits", "asr_tag", "vad_policy_name", "artifacts_path", "exp_path", "manifest_output_path"],
+    )
     return parser.parse_args()
 
 
@@ -30,6 +34,18 @@ def main():
 
     if args.field == "vad_policy_name":
         print(config["vad_policy"]["policy_name"])
+        return
+
+    if args.field == "artifacts_path":
+        print(config["artifacts_path"])
+        return
+
+    if args.field == "exp_path":
+        print(config["exp_path"])
+        return
+
+    if args.field == "manifest_output_path":
+        print(config["manifest"]["output_path"])
         return
 
 

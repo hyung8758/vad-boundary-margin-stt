@@ -28,29 +28,29 @@ run_step1() {
     python scripts/generate_oracle_variants.py \
       --config "${CONFIG_PATH}" \
       --logging-config "${LOGGING_CONFIG_PATH}" \
-      --manifest "artifacts/manifests/${SPLIT}.jsonl" \
+      --manifest "${MANIFEST_DIR}/${SPLIT}.jsonl" \
       "${LIMIT_ARGS[@]}"
 
     python scripts/run_asr_decode.py \
       --config "${CONFIG_PATH}" \
       --logging-config "${LOGGING_CONFIG_PATH}" \
       --exp-subdir step1 \
-      --manifest "artifacts/manifests/${SPLIT}.jsonl" \
+      --manifest "${MANIFEST_DIR}/${SPLIT}.jsonl" \
       "${LIMIT_ARGS[@]}"
 
     python scripts/run_asr_decode.py \
       --config "${CONFIG_PATH}" \
       --logging-config "${LOGGING_CONFIG_PATH}" \
       --exp-subdir step1 \
-      --manifest "artifacts/manifests/${SPLIT}_oracle_variants.jsonl"
+      --manifest "${MANIFEST_DIR}/${SPLIT}_oracle_variants.jsonl"
 
     python scripts/summarize_results.py \
       --config "${CONFIG_PATH}" \
       --logging-config "${LOGGING_CONFIG_PATH}" \
       --exp-subdir step1 \
       --inputs \
-      "exp/step1/decodes/${SPLIT}__${ASR_TAG}.jsonl" \
-      "exp/step1/decodes/${SPLIT}_oracle_variants__${ASR_TAG}.jsonl" \
+      "${EXP_PATH}/step1/decodes/${SPLIT}__${ASR_TAG}.jsonl" \
+      "${EXP_PATH}/step1/decodes/${SPLIT}_oracle_variants__${ASR_TAG}.jsonl" \
       --output-prefix "${DATASET}_${SPLIT}"
   done
 
@@ -65,9 +65,9 @@ run_step1() {
 
 run_step2() {
   local policy_tag="silero_vad_${POLICY_NAME}"
-  local step1_decode_dir="${PROJECT_ROOT}/exp/step1/decodes"
-  local step2_decode_dir="${PROJECT_ROOT}/exp/step2/decodes"
-  local manifest_dir="${PROJECT_ROOT}/artifacts/manifests"
+  local step1_decode_dir="${EXP_PATH}/step1/decodes"
+  local step2_decode_dir="${EXP_PATH}/step2/decodes"
+  local manifest_dir="${MANIFEST_DIR}"
 
   echo "=== START step2 apply_vad | dataset=${DATASET} limit=${LIMIT:-all} ==="
 
@@ -122,8 +122,8 @@ run_step2() {
       --exp-subdir step2 \
       --inputs \
       "${step2_baseline_input}" \
-      "exp/step2/decodes/${SPLIT}__silero_vad_default__${ASR_TAG}.jsonl" \
-      "exp/step2/decodes/${SPLIT}__${policy_tag}__${ASR_TAG}.jsonl" \
+      "${EXP_PATH}/step2/decodes/${SPLIT}__silero_vad_default__${ASR_TAG}.jsonl" \
+      "${EXP_PATH}/step2/decodes/${SPLIT}__${policy_tag}__${ASR_TAG}.jsonl" \
       --output-prefix "${DATASET}_${SPLIT}"
   done
 
@@ -157,6 +157,8 @@ fi
 readarray -t SPLITS < <(read_pipeline_config --dataset "${DATASET}" --field splits)
 ASR_TAG="$(read_pipeline_config --field asr_tag)"
 POLICY_NAME="$(read_pipeline_config --field vad_policy_name)"
+EXP_PATH="$(read_pipeline_config --field exp_path)"
+MANIFEST_DIR="$(read_pipeline_config --field manifest_output_path)"
 
 case "${STAGE}" in
   step1)
