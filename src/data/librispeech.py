@@ -2,8 +2,6 @@ import logging
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
-from src.audio.io import get_audio_duration
-
 
 LOGGER = logging.getLogger(__name__)
 
@@ -58,6 +56,8 @@ def build_manifest_entries(
     skip_missing_textgrid=True,
     limit=None,
 ):
+    from src.audio.io import get_audio_duration
+
     split_root = Path(data_path) / split
     if not split_root.exists():
         raise FileNotFoundError(f"Split directory not found: {split_root}")
