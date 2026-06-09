@@ -53,14 +53,51 @@ pip install -r requirements.txt
 ```
 
 이 저장소는 다음을 전제로 합니다.
-- LibriSpeech 오디오가 준비되어 있어야 합니다.
-- MFA / forced-alignment TextGrid 파일이 준비되어 있어야 합니다.
-- MFA 설치 및 실행 과정은 이 저장소에 포함되어 있지 않습니다.
+- LibriSpeech 오디오는 `data/LibriSpeech` 아래에 준비합니다.
+- MFA / forced-alignment TextGrid 파일은 `data/LibriSpeech/textgrid` 아래에 준비합니다.
+- MFA는 별도의 conda 환경에서 설치해 사용합니다.
 
 ## 데이터 준비
 논문 실험에서는 LibriSpeech 평가 split만 사용했습니다.
 
-예상 데이터 구조는 아래와 같습니다.
+먼저 LibriSpeech 평가 split을 다운로드합니다.
+
+```bash
+bash scripts/data/download_librispeech.sh
+```
+
+이 스크립트는 OpenSLR SLR12에서 아래 split을 다운로드하고 압축을 해제합니다.
+- `dev-clean`
+- `dev-other`
+- `test-clean`
+- `test-other`
+
+강제 정렬은 MFA 전용 conda 환경에서 진행하는 것을 권장합니다.
+
+```bash
+conda create -n mfa-aligner -c conda-forge montreal-forced-aligner pyyaml
+conda activate mfa-aligner
+```
+
+MFA에서 사용할 pretrained dictionary와 acoustic model을 다운로드합니다.
+
+```bash
+mfa model download dictionary english_us_mfa
+mfa model download acoustic english_mfa
+```
+
+이후 LibriSpeech를 MFA 입력 형식으로 준비하고 TextGrid 파일을 생성합니다.
+
+```bash
+python scripts/data/run_mfa_librispeech.py --jobs 8
+```
+
+기본값으로 `conf/base.yaml`에 적힌 네 split(`dev-clean`, `dev-other`, `test-clean`, `test-other`)을 모두 처리합니다.
+스크립트 내부에서 MFA 임시 작업 파일을 정리하는 옵션을 기본으로 사용하므로 별도 옵션을 지정할 필요는 없습니다.
+생성된 TextGrid 파일은 `data/LibriSpeech/textgrid/<split>` 아래에 저장됩니다.
+MFA가 끝난 뒤에는 다시 본 실험용 Python 환경으로 돌아와 STT pipeline을 실행하면 됩니다.
+
+데이터 준비가 끝나면 아래와 같은 구조가 됩니다.
 
 ```text
 data/
@@ -70,6 +107,10 @@ data/
     test-clean/
     test-other/
     textgrid/
+      dev-clean/
+      dev-other/
+      test-clean/
+      test-other/
 ```
 
 논문에서 사용한 STT 모델은 `wav2vec2-base-960h`입니다.

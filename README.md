@@ -54,14 +54,51 @@ pip install -r requirements.txt
 ```
 
 This repository assumes:
-- LibriSpeech audio is already prepared
-- MFA / forced-alignment TextGrid files are already prepared
-- MFA itself is not installed or executed inside this repository
+- LibriSpeech audio is prepared under `data/LibriSpeech`
+- MFA / forced-alignment TextGrid files are prepared under `data/LibriSpeech/textgrid`
+- MFA is installed in a separate conda environment
 
 ## Data preparation
 The paper experiments use LibriSpeech evaluation splits only.
 
-Expected layout:
+Download the LibriSpeech evaluation splits:
+
+```bash
+bash scripts/data/download_librispeech.sh
+```
+
+This downloads and extracts the following splits from OpenSLR SLR12:
+- `dev-clean`
+- `dev-other`
+- `test-clean`
+- `test-other`
+
+For forced alignment, create a separate MFA environment:
+
+```bash
+conda create -n mfa-aligner -c conda-forge montreal-forced-aligner pyyaml
+conda activate mfa-aligner
+```
+
+Download the MFA pretrained dictionary and acoustic model:
+
+```bash
+mfa model download dictionary english_us_mfa
+mfa model download acoustic english_mfa
+```
+
+Then prepare the LibriSpeech corpus for MFA and generate TextGrid files:
+
+```bash
+python scripts/data/run_mfa_librispeech.py --jobs 8
+```
+
+By default, this runs all four splits listed in `conf/base.yaml`: `dev-clean`, `dev-other`, `test-clean`, and `test-other`.
+The script passes MFA's cleanup option by default so that temporary alignment files are reset before each run.
+The generated TextGrid files are saved under `data/LibriSpeech/textgrid/<split>`.
+After MFA finishes, return to the main experiment environment before running the STT pipeline.
+
+The expected layout after data preparation is:
 
 ```text
 data/
@@ -71,6 +108,10 @@ data/
     test-clean/
     test-other/
     textgrid/
+      dev-clean/
+      dev-other/
+      test-clean/
+      test-other/
 ```
 
 The STT backbone used in the paper is `wav2vec2-base-960h`.
